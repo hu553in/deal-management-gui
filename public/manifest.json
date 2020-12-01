@@ -1,6 +1,6 @@
 {
-  "short_name": "customer-supplier-deal-management",
-  "name": "customer-supplier-deal-management",
+  "short_name": "deal-management",
+  "name": "deal-management",
   "icons": [
     {
       "src": "./android-chrome-192x192.png",

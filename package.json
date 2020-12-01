@@ -1,5 +1,5 @@
 {
-  "name": "customer-supplier-deal-management-gui",
+  "name": "deal-management-gui",
   "version": "1.0.0",
   "private": true,
   "dependencies": {

@@ -8,7 +8,7 @@ axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 ReactDOM.render(
   <React.StrictMode>
-    customer-supplier-deal-management
+    deal-management
   </React.StrictMode>,
   document.getElementById('root')
 );
