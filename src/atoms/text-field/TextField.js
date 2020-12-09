@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 const TextField = ({
   value,
+  type,
   placeholder,
   onChange,
   onKeyUp,
@@ -10,7 +11,7 @@ const TextField = ({
 }) => (
     <input
       className={className}
-      type="text"
+      type={type}
       placeholder={placeholder}
       value={value}
       onChange={onChange}
@@ -22,11 +23,13 @@ TextField.propTypes = {
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   className: PropTypes.string.isRequired,
+  type: PropTypes.oneOf(['text', 'password']),
   placeholder: PropTypes.string,
   onKeyUp: PropTypes.func
 };
 
 TextField.defaultProps = {
+  type: 'text',
   placeholder: '',
   onKeyUp: () => { }
 };

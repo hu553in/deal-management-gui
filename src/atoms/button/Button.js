@@ -19,18 +19,23 @@ const StyledButton = styled(Button)`
   background-position: center;
   background-repeat: no-repeat;
   background-image: url(${({ icon }) => icon});
-  &:hover {
-    background-image: url(${({ hoverIcon }) => hoverIcon});
-  }
-  &:active {
-    background-image: url(${({ activeIcon }) => activeIcon});
-  }
+  ${({ hoverIcon }) => hoverIcon && `&:hover {
+    background-image: url(${hoverIcon});
+  }`}
+  ${({ activeIcon }) => activeIcon && `&:active {
+    background-image: url(${activeIcon});
+  }`}
 `;
 
 StyledButton.propTypes = {
   icon: PropTypes.string.isRequired,
-  hoverIcon: PropTypes.string.isRequired,
-  activeIcon: PropTypes.string.isRequired
+  hoverIcon: PropTypes.string,
+  activeIcon: PropTypes.string
+};
+
+StyledButton.defaultProps = {
+  hoverIcon: null,
+  activeIcon: null
 };
 
 export default StyledButton;
