@@ -6,7 +6,9 @@ import ContextMenuSeparator from './context-menu-separator/ContextMenuSeparator'
 import ContextMenu from './context-menu/ContextMenu';
 import DealStatus from './deal-status/DealStatus';
 import Dropdown from './dropdown/Dropdown';
-import HeaderNavLink from './header-nav-link/HeaderNavLink';
+import Header from './header/Header';
+import HeaderNavBar from './header-nav-bar/HeaderNavBar';
+import HeaderNavBarLink from './header-nav-bar-link/HeaderNavBarLink';
 import OvalButton from './oval-button/OvalButton';
 import PasswordField from './password-field/PasswordField';
 import RenderIfTrue from './render-if-true/RenderIfTrue';
@@ -31,7 +33,9 @@ export {
   ContextMenuSeparator,
   DealStatus,
   Dropdown,
-  HeaderNavLink,
+  Header,
+  HeaderNavBar,
+  HeaderNavBarLink,
   OvalButton,
   PasswordField,
   RenderIfTrue,

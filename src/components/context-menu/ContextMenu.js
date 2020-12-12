@@ -9,7 +9,9 @@ import {
 } from '../index';
 import closeMenu from './images/close-menu.svg';
 
-const StyledButton = styled((props) => <Button {...props} />)`
+const StyledButton = styled(
+  (props) => <Button {...props} />
+)`
   position: absolute;
   right: 13px;
   top: 13px;

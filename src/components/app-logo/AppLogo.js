@@ -10,7 +10,9 @@ AppLogo.propTypes = {
   className: PropTypes.string.isRequired
 };
 
-const StyledAppLogo = styled((props) => <AppLogo {...props} />)`
+const StyledAppLogo = styled(
+  (props) => <AppLogo {...props} />
+)`
   width: 130px;
   height: 130px;
 `;

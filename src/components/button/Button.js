@@ -10,7 +10,9 @@ Button.propTypes = {
   className: PropTypes.string.isRequired
 };
 
-const StyledButton = styled((props) => <Button {...props} />)`
+const StyledButton = styled(
+  (props) => <Button {...props} />
+)`
   width: 26px;
   height: 26px;
   padding: 0;

@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { USER_ROLES } from '../../constants';
+import { USER_ROLES, USER_ROLES_TO_RENDER } from '../../constants';
 
 const UserInfo = ({ email, role, className }) => (
   <div className={className}>
     <span id="userInfo__email">{email}</span>
-    <span id="userInfo__role">{role}</span>
+    <span id="userInfo__role">{USER_ROLES_TO_RENDER[role]}</span>
   </div>
 );
 

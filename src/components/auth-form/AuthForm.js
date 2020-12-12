@@ -78,10 +78,10 @@ const AuthForm = ({
     setPassword(event.target.value);
   }
   const checkEmailValidity = () => (
-    setEmailValid(EMAIL_REGEX.test(email))
+    setEmailValid(email.length === 0 || EMAIL_REGEX.test(email))
   );
   const checkPasswordValidity = () => (
-    setPasswordValid(password.length > 8)
+    setPasswordValid(password.length === 0 || password.length > 8)
   );
   const submitButtonDisabled = (
     email.length === 0 ||
@@ -156,7 +156,7 @@ const StyledAuthForm = styled(
   align-items: center;
   width: 700px;
   height: 500px;
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
   border-radius: 5px;
 `;
 

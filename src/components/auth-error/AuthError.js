@@ -10,7 +10,9 @@ AuthError.propTypes = {
   className: PropTypes.string.isRequired
 };
 
-const StyledAuthError = styled((props) => <AuthError {...props} />)`
+const StyledAuthError = styled(
+  (props) => <AuthError {...props} />
+)`
   color: #ee752e;
   font-size: 18px;
   display: inline-block;

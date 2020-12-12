@@ -21,10 +21,17 @@ export const DEAL_STATUS_COLORS = {
 };
 
 export const USER_ROLES = {
-  VIEWER: 'VIEWER',
-  EDITOR: 'EDITOR',
-  SUPERVISOR: 'SUPERVISOR',
-  ADMIN: 'ADMIN'
+  VIEWER: 'ROLE_VIEWER',
+  EDITOR: 'ROLE_EDITOR',
+  SUPERVISOR: 'ROLE_SUPERVISOR',
+  ADMIN: 'ROLE_ADMIN'
+};
+
+export const USER_ROLES_TO_RENDER = {
+  ROLE_VIEWER: 'Viewer',
+  ROLE_EDITOR: 'Editor',
+  ROLE_SUPERVISOR: 'Supervisor',
+  ROLE_ADMIN: 'Admin'
 };
 
 export const EMAIL_REGEX = /^\S+@\S+\.\S+$/;

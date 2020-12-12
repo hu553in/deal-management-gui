@@ -17,7 +17,9 @@ OvalButton.propTypes = {
   className: PropTypes.string.isRequired
 };
 
-const StyledOvalButton = styled((props) => <OvalButton {...props} />)`
+const StyledOvalButton = styled(
+  (props) => <OvalButton {...props} />
+)`
   width: 182px;
   height: 49px;
   border-radius: 28px;

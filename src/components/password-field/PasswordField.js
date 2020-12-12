@@ -5,13 +5,17 @@ import { Button, TextField } from '../index';
 import HidePassword from './images/hide-password.svg';
 import ShowPassword from './images/show-password.svg';
 
-const StyledTextField = styled((props) => <TextField {...props} />)`
+const StyledTextField = styled(
+  (props) => <TextField {...props} />
+)`
   && {
     padding-right: 56px;
   }
 `;
 
-const StyledButton = styled((props) => <Button {...props} />)`
+const StyledButton = styled(
+  (props) => <Button {...props} />
+)`
   position: absolute;
   right: 14px;
   top: 7px;

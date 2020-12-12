@@ -3,24 +3,23 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { ROUTES } from '../../constants';
 
-const HeaderNavLink = ({ text, route, className }) => (
+const HeaderNavBarLink = ({ text, route, className }) => (
   <Link className={className} to={route}>
     {text}
   </Link>
 );
 
-HeaderNavLink.propTypes = {
+HeaderNavBarLink.propTypes = {
   text: PropTypes.string.isRequired,
   route: PropTypes.oneOf(Object.values(ROUTES)).isRequired,
   className: PropTypes.string.isRequired
 };
 
-const StyledHeaderNavLink = styled(
-  (props) => <HeaderNavLink {...props} />
+const StyledHeaderNavBarLink = styled(
+  (props) => <HeaderNavBarLink {...props} />
 )`
   font-family: 'Roboto', sans-serif;
   font-size: 30px;
-  width: 145px;
   height: 43px;
   display: inline-block;
   text-decoration: none;
@@ -48,12 +47,12 @@ const StyledHeaderNavLink = styled(
   }`}
 `;
 
-StyledHeaderNavLink.propTypes = {
+StyledHeaderNavBarLink.propTypes = {
   current: PropTypes.bool
 };
 
-StyledHeaderNavLink.defaultProps = {
+StyledHeaderNavBarLink.defaultProps = {
   current: false
 };
 
-export default StyledHeaderNavLink;
+export default StyledHeaderNavBarLink;

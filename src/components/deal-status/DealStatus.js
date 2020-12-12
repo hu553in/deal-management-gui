@@ -10,7 +10,9 @@ DealStatus.propTypes = {
   className: PropTypes.string.isRequired
 };
 
-const StyledDealStatus = styled((props) => <DealStatus {...props} />)`
+const StyledDealStatus = styled(
+  (props) => <DealStatus {...props} />
+)`
   background-color: ${({ status }) => DEAL_STATUS_COLORS[status]};
   width: 13px;
   height: 13px;
