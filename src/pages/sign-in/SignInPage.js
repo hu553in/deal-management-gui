@@ -1,9 +1,9 @@
+import { AuthForm } from '@src/components/index';
+import { API_ENDPOINTS, ROUTES } from '@src/constants';
+import { authManagementService } from '@src/services/index';
 import axios from 'axios';
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { AuthForm } from '../../components/index';
-import { ROUTES } from '../../constants';
-import { authManagementService } from '../../services/index';
 
 const SignInPage = () => {
   const history = useHistory();
@@ -11,26 +11,29 @@ const SignInPage = () => {
   const signIn = (email, password) => {
     setError(undefined);
     axios
-      .post(ROUTES.SIGN_IN, { email, password })
-      .then((response) => {
+      .post(API_ENDPOINTS.SIGN_IN, { email, password })
+      .then(response => {
         authManagementService.setToken(response.data.data.token);
         authManagementService.setUser(response.data.data.user);
         history.push(ROUTES.DEFAULT);
       })
-      .catch(() => setError(
-        "Unable to sign in. Please check " +
-        "the entered data or try again later."
-      ));
-  }
+      .catch(e => {
+        setError(
+          'Unable to sign in. Please check ' +
+            'the entered data or try again later.'
+        );
+        throw e;
+      });
+  };
   return (
     <AuthForm
       submitCallback={signIn}
-      authSuggestionText={"Do not have an account yet?"}
+      authSuggestionText={'Do not have an account yet?'}
       authSuggestionLink={{
         text: 'Sign up',
-        route: ROUTES.SIGN_UP
+        route: ROUTES.SIGN_UP,
       }}
-      submitButtonText="Sign in"
+      submitButtonText='Sign in'
       error={error}
     />
   );

@@ -1,50 +1,23 @@
-import axios from 'axios';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {
-  BrowserRouter,
-  Redirect,
-  Route,
-  Switch
-} from 'react-router-dom';
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { ROUTES } from './constants';
 import './index.css';
-import { MainLayout, UnauthorizedLayout } from './layouts/index';
-import { SignInPage, SignUpPage } from './pages/index';
+import {
+  CustomersPage,
+  DealsPage,
+  ProvidersPage,
+  SignInPage,
+  SignUpPage,
+} from './pages/index';
 import reportWebVitals from './reportWebVitals';
-import { authManagementService } from './services/index';
+import {
+  configureAxios,
+  renderMainLayout,
+  renderUnauthorizedLayout,
+} from './util/index';
 
-axios.defaults.baseURL = process.env.REACT_APP_API_URL;
-axios.interceptors.request.use((config) => {
-  if (authManagementService.isAuthenticated()) {
-    config.headers.Authorization = (
-      `Bearer ${authManagementService.getToken()}`
-    );
-  }
-  return config;
-});
-
-const renderMainLayout = (Component) => {
-  if (!authManagementService.isAuthenticated()) {
-    return <Redirect to={ROUTES.SIGN_IN} />;
-  }
-  return (
-    <MainLayout>
-      <Component />
-    </MainLayout>
-  );
-};
-
-const renderUnauthorizedLayout = (Component) => {
-  if (authManagementService.isAuthenticated()) {
-    return <Redirect to={ROUTES.DEFAULT} />;
-  }
-  return (
-    <UnauthorizedLayout>
-      <Component />
-    </UnauthorizedLayout>
-  );
-};
+configureAxios();
 
 ReactDOM.render(
   <BrowserRouter>
@@ -62,17 +35,17 @@ ReactDOM.render(
       <Route
         exact
         path={ROUTES.CUSTOMERS}
-        render={() => renderMainLayout(() => (<>Customers!</>))}
+        render={() => renderMainLayout(CustomersPage)}
       />
       <Route
         exact
         path={ROUTES.PROVIDERS}
-        render={() => renderMainLayout(() => (<>Providers!</>))}
+        render={() => renderMainLayout(ProvidersPage)}
       />
       <Route
         exact
         path={ROUTES.DEALS}
-        render={() => renderMainLayout(() => (<>Deals!</>))}
+        render={() => renderMainLayout(DealsPage)}
       />
       <Redirect to={ROUTES.CUSTOMERS} />
     </Switch>

@@ -1,18 +1,14 @@
+import { DEAL_STATUSES, DEAL_STATUS_COLORS } from '@src/constants';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { DEAL_STATUSES, DEAL_STATUS_COLORS } from '../../constants';
 
-const DealStatus = ({ className }) => (
-  <span className={className}></span>
-);
+const DealStatus = ({ className }) => <span className={className}></span>;
 
 DealStatus.propTypes = {
-  className: PropTypes.string.isRequired
+  className: PropTypes.string.isRequired,
 };
 
-const StyledDealStatus = styled(
-  (props) => <DealStatus {...props} />
-)`
+const StyledDealStatus = styled(props => <DealStatus {...props} />)`
   background-color: ${({ status }) => DEAL_STATUS_COLORS[status]};
   width: 13px;
   height: 13px;
@@ -21,7 +17,7 @@ const StyledDealStatus = styled(
 `;
 
 StyledDealStatus.propTypes = {
-  color: PropTypes.oneOf(Object.values(DEAL_STATUSES)).isRequired
+  status: PropTypes.oneOf(Object.values(DEAL_STATUSES)).isRequired,
 };
 
 export default StyledDealStatus;

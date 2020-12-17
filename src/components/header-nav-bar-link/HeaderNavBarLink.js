@@ -1,7 +1,7 @@
+import { ROUTES } from '@src/constants';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { ROUTES } from '../../constants';
 
 const HeaderNavBarLink = ({ text, route, className }) => (
   <Link className={className} to={route}>
@@ -12,31 +12,34 @@ const HeaderNavBarLink = ({ text, route, className }) => (
 HeaderNavBarLink.propTypes = {
   text: PropTypes.string.isRequired,
   route: PropTypes.oneOf(Object.values(ROUTES)).isRequired,
-  className: PropTypes.string.isRequired
+  className: PropTypes.string.isRequired,
 };
 
-const StyledHeaderNavBarLink = styled(
-  (props) => <HeaderNavBarLink {...props} />
-)`
+const StyledHeaderNavBarLink = styled(props => <HeaderNavBarLink {...props} />)`
   font-family: 'Roboto', sans-serif;
   font-size: 30px;
   height: 43px;
-  display: inline-block;
   text-decoration: none;
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   &:visited {
     color: #000;
   }
+
   &:hover {
     color: #007b5c;
   }
+
   &:active {
     color: #004231;
   }
-  ${({ current }) => current && `&::after {
+
+  ${({ current }) =>
+    current &&
+    `&::after {
     position: absolute;
     content: '';
     left: -6px;
@@ -48,11 +51,11 @@ const StyledHeaderNavBarLink = styled(
 `;
 
 StyledHeaderNavBarLink.propTypes = {
-  current: PropTypes.bool
+  current: PropTypes.bool,
 };
 
 StyledHeaderNavBarLink.defaultProps = {
-  current: false
+  current: false,
 };
 
 export default StyledHeaderNavBarLink;

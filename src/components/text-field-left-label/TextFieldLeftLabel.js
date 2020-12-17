@@ -7,12 +7,12 @@ const TextFieldLeftLabel = ({ text, className }) => (
 
 TextFieldLeftLabel.propTypes = {
   text: PropTypes.string.isRequired,
-  className: PropTypes.string.isRequired
+  className: PropTypes.string.isRequired,
 };
 
-const StyledTextFieldLeftLabel = styled(
-  (props) => <TextFieldLeftLabel {...props} />
-)`
+const StyledTextFieldLeftLabel = styled(props => (
+  <TextFieldLeftLabel {...props} />
+))`
   font-size: 24px;
   display: inline-block;
 `;

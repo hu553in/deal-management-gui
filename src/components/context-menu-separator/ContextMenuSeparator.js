@@ -6,16 +6,16 @@ const ContextMenuSeparator = ({ className }) => (
 );
 
 ContextMenuSeparator.propTypes = {
-  className: PropTypes.string.isRequired
+  className: PropTypes.string.isRequired,
 };
 
-const StyledContextMenuSeparator = styled(
-  (props) => <ContextMenuSeparator {...props} />
-)`
+const StyledContextMenuSeparator = styled(props => (
+  <ContextMenuSeparator {...props} />
+))`
   height: 0;
   width: 100%;
   margin: 7px 0;
-  border: 1px solid #C7C7C7;
+  border: 1px solid #c7c7c7;
 `;
 
 export default StyledContextMenuSeparator;

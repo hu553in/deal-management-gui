@@ -1,21 +1,16 @@
+import { Eye, EyeCrossed } from '@src/assets/icons/index';
+import { Button, TextField } from '@src/components/index';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import styled from 'styled-components';
-import { Button, TextField } from '../index';
-import HidePassword from './images/hide-password.svg';
-import ShowPassword from './images/show-password.svg';
 
-const StyledTextField = styled(
-  (props) => <TextField {...props} />
-)`
+const StyledTextField = styled(props => <TextField {...props} />)`
   && {
     padding-right: 56px;
   }
 `;
 
-const StyledButton = styled(
-  (props) => <Button {...props} />
-)`
+const StyledButton = styled(props => <Button {...props} />)`
   position: absolute;
   right: 14px;
   top: 7px;
@@ -28,7 +23,7 @@ const PasswordField = ({
   onKeyUp,
   onFocusOut,
   invalid,
-  className
+  className,
 }) => {
   const [type, setType] = useState('password');
   return (
@@ -43,16 +38,8 @@ const PasswordField = ({
         invalid={invalid}
       />
       <StyledButton
-        onClick={() => setType(
-          type === 'password'
-            ? 'text'
-            : 'password'
-        )}
-        icon={
-          type === 'password'
-            ? ShowPassword
-            : HidePassword
-        }
+        onClick={() => setType(type === 'password' ? 'text' : 'password')}
+        icon={type === 'password' ? Eye : EyeCrossed}
       />
     </div>
   );
@@ -65,19 +52,17 @@ PasswordField.propTypes = {
   placeholder: PropTypes.string,
   onKeyUp: PropTypes.func,
   onFocusOut: PropTypes.func,
-  invalid: PropTypes.bool
+  invalid: PropTypes.bool,
 };
 
 PasswordField.defaultProps = {
   placeholder: '',
-  onKeyUp: () => { },
-  onFocusOut: () => { },
-  invalid: false
+  onKeyUp: () => {},
+  onFocusOut: () => {},
+  invalid: false,
 };
 
-const StyledPasswordField = styled(
-  (props) => <PasswordField {...props} />
-)`
+const StyledPasswordField = styled(props => <PasswordField {...props} />)`
   position: relative;
   display: inline-block;
 `;

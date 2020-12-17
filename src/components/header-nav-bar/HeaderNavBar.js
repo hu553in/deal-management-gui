@@ -1,13 +1,12 @@
+import { HeaderNavBarLink } from '@src/components/index';
+import { ROUTES } from '@src/constants';
 import PropTypes from 'prop-types';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { ROUTES } from '../../constants';
-import { HeaderNavBarLink } from '../index';
 
-const StyledHeaderNavBarLink = styled(
-  (props) => <HeaderNavBarLink {...props} />
-)`
+const StyledHeaderNavBarLink = styled(props => <HeaderNavBarLink {...props} />)`
   margin-right: 80px;
+
   &:last-child {
     margin-right: 0;
   }
@@ -15,7 +14,7 @@ const StyledHeaderNavBarLink = styled(
 
 const HeaderNavBar = ({ links, className }) => {
   const location = useLocation();
-  const linkElements = links.map((link) => (
+  const linkElements = links.map(link => (
     <StyledHeaderNavBarLink
       key={link.route}
       text={link.text}
@@ -23,24 +22,20 @@ const HeaderNavBar = ({ links, className }) => {
       current={location.pathname.includes(link.route)}
     />
   ));
-  return (
-    <nav className={className}>
-      {linkElements}
-    </nav>
-  );
+  return <nav className={className}>{linkElements}</nav>;
 };
 
 HeaderNavBar.propTypes = {
-  links: PropTypes.arrayOf(PropTypes.shape({
-    text: PropTypes.string.isRequired,
-    route: PropTypes.oneOf(Object.values(ROUTES)).isRequired
-  })),
-  className: PropTypes.string.isRequired
+  links: PropTypes.arrayOf(
+    PropTypes.shape({
+      text: PropTypes.string.isRequired,
+      route: PropTypes.oneOf(Object.values(ROUTES)).isRequired,
+    })
+  ),
+  className: PropTypes.string.isRequired,
 };
 
-const StyledHeaderNavBar = styled(
-  (props) => <HeaderNavBar {...props} />
-)`
+const StyledHeaderNavBar = styled(props => <HeaderNavBar {...props} />)`
   display: inline-flex;
   justify-content: space-between;
 `;

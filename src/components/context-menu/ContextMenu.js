@@ -1,17 +1,15 @@
+import { UpArrow } from '@src/assets/icons/index';
+import {
+  Button,
+  ContextMenuItem,
+  ContextMenuSeparator,
+} from '@src/components/index';
 import PropTypes from 'prop-types';
 import { useMemo } from 'react';
 import ReactModal from 'react-modal';
 import styled from 'styled-components';
-import {
-  Button,
-  ContextMenuItem,
-  ContextMenuSeparator
-} from '../index';
-import closeMenu from './images/close-menu.svg';
 
-const StyledButton = styled(
-  (props) => <Button {...props} />
-)`
+const StyledButton = styled(props => <Button {...props} />)`
   position: absolute;
   right: 13px;
   top: 13px;
@@ -22,12 +20,12 @@ const ContextMenu = ({
   separatorPositions,
   closeMenuCallback,
   topOffset,
-  leftOffset
+  leftOffset,
 }) => {
   const modalStyles = {
     overlay: {
       ...ReactModal.defaultStyles.overlay,
-      backgroundColor: '#fff'
+      backgroundColor: '#fff',
     },
     content: {
       ...ReactModal.defaultStyles.content,
@@ -42,51 +40,46 @@ const ContextMenu = ({
       padding: '10px 20px',
       display: 'flex',
       flexDirection: 'column',
-      justifyContent: 'center'
-    }
+      justifyContent: 'center',
+    },
   };
   const itemElements = useMemo(() => {
-    const elements = items.map((item) => (
+    const elements = items.map(item => (
       <ContextMenuItem
         text={item.text}
         icon={item.icon}
         onClick={item.onClick}
       />
     ));
-    separatorPositions.forEach((position) => (
+    separatorPositions.forEach(position =>
       elements.splice(position, 0, <ContextMenuSeparator />)
-    ));
+    );
     return elements;
   }, [items, separatorPositions]);
   return (
-    <ReactModal
-      style={modalStyles}
-      isOpen={true}
-      onRequestClose={closeMenuCallback}
-    >
-      <StyledButton
-        icon={closeMenu}
-        onClick={closeMenuCallback}
-      />
+    <ReactModal style={modalStyles} isOpen onRequestClose={closeMenuCallback}>
+      <StyledButton icon={UpArrow} onClick={closeMenuCallback} />
       {itemElements}
     </ReactModal>
   );
 };
 
 ContextMenu.propTypes = {
-  items: PropTypes.arrayOf(PropTypes.shape({
-    icon: PropTypes.string.isRequired,
-    text: PropTypes.string.isRequired,
-    onClick: PropTypes.func.isRequired
-  })).isRequired,
+  items: PropTypes.arrayOf(
+    PropTypes.shape({
+      icon: PropTypes.string.isRequired,
+      text: PropTypes.string.isRequired,
+      onClick: PropTypes.func.isRequired,
+    })
+  ).isRequired,
   closeMenuCallback: PropTypes.func.isRequired,
   topOffset: PropTypes.number.isRequired,
   leftOffset: PropTypes.number.isRequired,
-  separatorPositions: PropTypes.arrayOf(PropTypes.number)
+  separatorPositions: PropTypes.arrayOf(PropTypes.number),
 };
 
 ContextMenu.defaultProps = {
-  separatorPositions: []
+  separatorPositions: [],
 };
 
 export default ContextMenu;

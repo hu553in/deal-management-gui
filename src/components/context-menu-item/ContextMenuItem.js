@@ -10,12 +10,10 @@ const ContextMenuItem = ({ text, onClick, className }) => (
 ContextMenuItem.propTypes = {
   text: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
-  className: PropTypes.string.isRequired
+  className: PropTypes.string.isRequired,
 };
 
-const StyledContextMenuItem = styled(
-  (props) => <ContextMenuItem {...props} />
-)`
+const StyledContextMenuItem = styled(props => <ContextMenuItem {...props} />)`
   color: #838383;
   font-size: 18px;
   height: 42px;
@@ -31,7 +29,7 @@ const StyledContextMenuItem = styled(
 `;
 
 StyledContextMenuItem.propTypes = {
-  icon: PropTypes.string.isRequired
+  icon: PropTypes.string.isRequired,
 };
 
 export default StyledContextMenuItem;

@@ -1,13 +1,11 @@
+import { AppLogo, HeaderNavBar, UserInfoSection } from '@src/components/index';
+import { ROUTES } from '@src/constants';
+import { authManagementService } from '@src/services/index';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
-import { ROUTES } from '../../constants';
 import { useHistory } from 'react-router-dom';
-import { authManagementService } from '../../services/index';
-import { AppLogo, HeaderNavBar, UserInfoSection } from '../index';
+import styled from 'styled-components';
 
-const StyledHeaderNavBar = styled(
-  (props) => <HeaderNavBar {...props} />
-)`
+const StyledHeaderNavBar = styled(props => <HeaderNavBar {...props} />)`
   margin: 0 60px;
 `;
 
@@ -15,14 +13,14 @@ const Header = ({ className }) => {
   const history = useHistory();
   const user = authManagementService.getUser();
   const navLinks = [
-    { text: "Customers", route: ROUTES.CUSTOMERS },
-    { text: "Providers", route: ROUTES.PROVIDERS },
-    { text: "Deals", route: ROUTES.DEALS }
+    { text: 'Customers', route: ROUTES.CUSTOMERS },
+    { text: 'Providers', route: ROUTES.PROVIDERS },
+    { text: 'Deals', route: ROUTES.DEALS },
   ];
   const signOut = () => {
     authManagementService.clear();
     history.push(ROUTES.DEFAULT);
-  }
+  };
   return (
     <header className={className}>
       <AppLogo />
@@ -37,12 +35,10 @@ const Header = ({ className }) => {
 };
 
 Header.propTypes = {
-  className: PropTypes.string.isRequired
+  className: PropTypes.string.isRequired,
 };
 
-const StyledHeader = styled(
-  (props) => <Header {...props} />
-)`
+const StyledHeader = styled(props => <Header {...props} />)`
   display: flex;
   align-items: center;
   justify-content: space-between;

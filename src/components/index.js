@@ -1,5 +1,7 @@
 import AppLogo from './app-logo/AppLogo';
 import AuthForm from './auth-form/AuthForm';
+import AuthProvider from './auth-provider/AuthProvider';
+import AvailableForRoles from './available-for-roles/AvailableForRoles';
 import Button from './button/Button';
 import ContextMenuItem from './context-menu-item/ContextMenuItem';
 import ContextMenuSeparator from './context-menu-separator/ContextMenuSeparator';
@@ -13,6 +15,7 @@ import OvalButton from './oval-button/OvalButton';
 import PasswordField from './password-field/PasswordField';
 import RenderIfTrue from './render-if-true/RenderIfTrue';
 import RoundedButton from './rounded-button/RoundedButton';
+import Table from './table/Table';
 import TextField from './text-field/TextField';
 import TextFieldLeftLabel from './text-field-left-label/TextFieldLeftLabel';
 import AuthError from './auth-error/AuthError';
@@ -25,8 +28,10 @@ export {
   AppLogo,
   AuthError,
   AuthForm,
+  AuthProvider,
   AuthSuggestionLink,
   AuthSuggestionText,
+  AvailableForRoles,
   Button,
   ContextMenu,
   ContextMenuItem,
@@ -40,8 +45,9 @@ export {
   PasswordField,
   RenderIfTrue,
   RoundedButton,
+  Table,
   TextField,
   TextFieldLeftLabel,
   UserInfo,
-  UserInfoSection
+  UserInfoSection,
 };

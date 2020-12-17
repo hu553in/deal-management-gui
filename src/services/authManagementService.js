@@ -3,12 +3,15 @@ class AuthManagementService {
     localStorage.setItem('token', token);
   }
 
-  isAuthenticated() {
-    return localStorage.getItem('token') !== null;
+  isAuthDataPresent() {
+    return (
+      localStorage.getItem('user') !== null &&
+      localStorage.getItem('token') !== null
+    );
   }
 
   getToken() {
-    localStorage.getItem('token');
+    return localStorage.getItem('token');
   }
 
   setUser(user) {

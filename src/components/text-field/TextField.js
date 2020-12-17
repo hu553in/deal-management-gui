@@ -9,19 +9,19 @@ const TextField = ({
   onKeyUp,
   onFocusOut,
   maxLength,
-  className
+  className,
 }) => (
-    <input
-      className={className}
-      type={type}
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-      onKeyUp={onKeyUp}
-      onBlur={onFocusOut}
-      maxLength={maxLength}
-    />
-  );
+  <input
+    className={className}
+    type={type}
+    placeholder={placeholder}
+    value={value}
+    onChange={onChange}
+    onKeyUp={onKeyUp}
+    onBlur={onFocusOut}
+    maxLength={maxLength}
+  />
+);
 
 TextField.propTypes = {
   value: PropTypes.string.isRequired,
@@ -31,15 +31,15 @@ TextField.propTypes = {
   placeholder: PropTypes.string,
   onKeyUp: PropTypes.func,
   onFocusOut: PropTypes.func,
-  maxLength: PropTypes.number
+  maxLength: PropTypes.number,
 };
 
 TextField.defaultProps = {
   type: 'text',
   placeholder: '',
-  onKeyUp: () => { },
-  onFocusOut: () => { },
-  maxLength: 255
+  onKeyUp: () => {},
+  onFocusOut: () => {},
+  maxLength: 255,
 };
 
 const getTextFieldColor = (value, invalid) => {
@@ -50,34 +50,28 @@ const getTextFieldColor = (value, invalid) => {
     return '#414141';
   }
   return '#838383';
-}
+};
 
-const StyledTextField = styled(
-  (props) => <TextField {...props} />
-)`
+const StyledTextField = styled(props => <TextField {...props} />)`
   width: 327px;
   height: 41px;
   display: inline-block;
   border-radius: 3px;
-  border: 1px solid ${({ value, invalid }) => (
-    getTextFieldColor(value, invalid)
-  )};
+  border: 1px solid ${({ value, invalid }) => getTextFieldColor(value, invalid)};
   font-family: 'Roboto', sans-serif;
   font-weight: 400;
   font-size: 18px;
-  color: ${({ value, invalid }) => (
-    getTextFieldColor(value, invalid)
-  )};
+  color: ${({ value, invalid }) => getTextFieldColor(value, invalid)};
   padding: 0 15px;
 `;
 
 StyledTextField.propTypes = {
   value: PropTypes.string.isRequired,
-  invalid: PropTypes.bool
+  invalid: PropTypes.bool,
 };
 
 StyledTextField.defaultProps = {
-  invalid: false
+  invalid: false,
 };
 
 export default StyledTextField;

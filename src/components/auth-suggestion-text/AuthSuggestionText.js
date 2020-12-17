@@ -7,12 +7,12 @@ const AuthSuggestionText = ({ text, className }) => (
 
 AuthSuggestionText.propTypes = {
   text: PropTypes.string.isRequired,
-  className: PropTypes.string.isRequired
+  className: PropTypes.string.isRequired,
 };
 
-const StyledAuthSuggestionText = styled(
-  (props) => <AuthSuggestionText {...props} />
-)`
+const StyledAuthSuggestionText = styled(props => (
+  <AuthSuggestionText {...props} />
+))`
   font-size: 18px;
   display: inline-block;
 `;

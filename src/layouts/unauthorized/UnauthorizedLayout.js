@@ -8,12 +8,12 @@ const UnauthorizedLayout = ({ children, className }) => (
 
 UnauthorizedLayout.propTypes = {
   children: PropTypes.node.isRequired,
-  className: PropTypes.string.isRequired
+  className: PropTypes.string.isRequired,
 };
 
-const StyledUnauthorizedLayout = styled(
-  (props) => <UnauthorizedLayout {...props} />
-)`
+const StyledUnauthorizedLayout = styled(props => (
+  <UnauthorizedLayout {...props} />
+))`
   width: 100vw;
   height: 100vh;
   display: flex;
