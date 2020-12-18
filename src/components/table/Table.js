@@ -1,6 +1,7 @@
 import { AvailableForRoles } from '@src/components/index';
 import { USER_ROLES } from '@src/constants';
 import PropTypes from 'prop-types';
+import { useMemo } from 'react';
 import styled from 'styled-components';
 
 const StyledTableWrapper = styled.div`
@@ -55,49 +56,59 @@ const EnhancedTable = ({
   formButtons,
   rowActions,
   dataIndexForKeyGeneration,
-}) => (
-  <StyledTableWrapper>
-    <table>
-      <thead>
-        <tr key='main-header-row'>
-          {columns.map(column => (
-            <th key={column.name}>{column.title}</th>
-          ))}
+}) => {
+  const mainHeaderElements = useMemo(
+    () => columns.map(column => <th key={column.name}>{column.title}</th>),
+    [columns]
+  );
+  const formHeaderElements = useMemo(
+    () =>
+      columns.map(column => (
+        <th key={`${column.name}-form-field`}>
+          {column.formField ? column.formField : null}
+        </th>
+      )),
+    [columns]
+  );
+  const rows = useMemo(
+    () =>
+      data.map(item => (
+        <tr key={`${item[dataIndexForKeyGeneration]}-row`}>
+          {[
+            ...columns.map(column => (
+              <td key={`${item[dataIndexForKeyGeneration]}-${column.name}`}>
+                {getCellValue(column, item)}
+              </td>
+            )),
+            <td key={`${item[dataIndexForKeyGeneration]}-row-actions`}>
+              {rowActions(item)}
+            </td>,
+          ]}
         </tr>
-        <AvailableForRoles
-          roles={[USER_ROLES.EDITOR, USER_ROLES.SUPERVISOR, USER_ROLES.ADMIN]}
-        >
-          <tr key='form-header-row'>
-            {[
-              ...columns.map(column => (
-                <th key={`${column.name}-form-field`}>
-                  {column.formField ? column.formField : null}
-                </th>
-              )),
-              <th key='form-buttons'>{formButtons()}</th>,
-            ]}
-          </tr>
-        </AvailableForRoles>
-      </thead>
-      <tbody>
-        {data.map(item => (
-          <tr key={`${item[dataIndexForKeyGeneration]}-row`}>
-            {[
-              ...columns.map(column => (
-                <td key={`${item[dataIndexForKeyGeneration]}-${column.name}`}>
-                  {getCellValue(column, item)}
-                </td>
-              )),
-              <td key={`${item[dataIndexForKeyGeneration]}-row-actions`}>
-                {rowActions(item)}
-              </td>,
-            ]}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </StyledTableWrapper>
-);
+      )),
+    [columns, data, dataIndexForKeyGeneration, rowActions]
+  );
+  return (
+    <StyledTableWrapper>
+      <table>
+        <thead>
+          <tr key='main-header-row'>{mainHeaderElements}</tr>
+          <AvailableForRoles
+            roles={[USER_ROLES.EDITOR, USER_ROLES.SUPERVISOR, USER_ROLES.ADMIN]}
+          >
+            <tr key='form-header-row'>
+              {[
+                ...formHeaderElements,
+                <th key='form-buttons'>{formButtons()}</th>,
+              ]}
+            </tr>
+          </AvailableForRoles>
+        </thead>
+        <tbody>{rows}</tbody>
+      </table>
+    </StyledTableWrapper>
+  );
+};
 
 EnhancedTable.propTypes = {
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,

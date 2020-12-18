@@ -29,29 +29,32 @@ const ContextMenu = ({
   rightOffset,
   openTo,
 }) => {
-  const modalStyles = {
-    overlay: {
-      ...ReactModal.defaultStyles.overlay,
-      backgroundColor: 'transparent',
-    },
-    content: {
-      ...ReactModal.defaultStyles.content,
-      position: 'absolute',
-      top: openTo === 'bottom' ? `calc(${topOffset}px - 13px)` : 'unset',
-      bottom: openTo === 'top' ? `calc(${bottomOffset}px - 13px)` : 'unset',
-      right: `calc(${rightOffset}px - 26px)`,
-      left: 'unset',
-      width: 'fit-content',
-      height: 'fit-content',
-      border: '2px solid #c7c7c7',
-      background: '#fff',
-      borderRadius: '3px',
-      padding: '10px 20px',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-    },
-  };
+  const modalStyles = useMemo(
+    () => ({
+      overlay: {
+        ...ReactModal.defaultStyles.overlay,
+        backgroundColor: 'transparent',
+      },
+      content: {
+        ...ReactModal.defaultStyles.content,
+        position: 'absolute',
+        top: openTo === 'bottom' ? `calc(${topOffset}px - 13px)` : 'unset',
+        bottom: openTo === 'top' ? `calc(${bottomOffset}px - 13px)` : 'unset',
+        right: `calc(${rightOffset}px - 26px)`,
+        left: 'unset',
+        width: 'fit-content',
+        height: 'fit-content',
+        border: '2px solid #c7c7c7',
+        background: '#fff',
+        borderRadius: '3px',
+        padding: '10px 20px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+      },
+    }),
+    [openTo, topOffset, bottomOffset, rightOffset]
+  );
   const itemElements = useMemo(() => {
     const elements = items.map(item => (
       <AvailableForRoles

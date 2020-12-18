@@ -13,12 +13,13 @@ import {
 import {
   AvailableForRoles,
   Button,
+  RenderIfTrue,
   RoundedButton,
   Table,
   TextField,
 } from '@src/components/index';
 import { FORM_STATES, USER_ROLES } from '@src/constants';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 const StyledTextField = styled(props => <TextField {...props} />)`
@@ -53,23 +54,32 @@ const CustomersPage = () => {
   const [idFieldValue, setIdFieldValue] = useState('');
   const [productFieldValue, setProductFieldValue] = useState('');
   const [phoneFieldValue, setPhoneFieldValue] = useState('');
-  const getAllCustomers = async () => {
+  const getAllCustomers = useCallback(async () => {
     const response = await customer.getAll();
-    return setCustomers(response.data.data);
-  };
-  const deleteCustomer = async id => {
-    await customer.deleteById(id);
-    return await getAllCustomers();
-  };
-  const editCustomer = async (id, product, phone) => {
-    await customer.edit(id, product, phone);
-    return await getAllCustomers();
-  };
-  const createCustomer = async (product, phone) => {
-    await customer.create(product, phone);
-    return await getAllCustomers();
-  };
-  useEffect(() => getAllCustomers(), []);
+    setCustomers(response.data.data);
+  }, []);
+  const deleteCustomer = useCallback(
+    async id => {
+      await customer.deleteById(id);
+      await getAllCustomers();
+    },
+    [getAllCustomers]
+  );
+  const editCustomer = useCallback(
+    async (id, product, phone) => {
+      await customer.edit(id, product, phone);
+      await getAllCustomers();
+    },
+    [getAllCustomers]
+  );
+  const createCustomer = useCallback(
+    async (product, phone) => {
+      await customer.create(product, phone);
+      await getAllCustomers();
+    },
+    [getAllCustomers]
+  );
+  useEffect(() => getAllCustomers(), [getAllCustomers]);
   const onChangeProductField = event => {
     event.preventDefault();
     setProductFieldValue(event.target.value);
@@ -78,111 +88,129 @@ const CustomersPage = () => {
     event.preventDefault();
     setPhoneFieldValue(event.target.value);
   };
-  const columns = [
-    {
-      name: 'id',
-      title: 'ID',
-      dataIndex: 'id',
-    },
-    {
-      name: 'product',
-      title: 'Product',
-      dataIndex: 'product',
-      formField: (
-        <StyledTextField
-          placeholder='Enter product'
-          value={productFieldValue}
-          onChange={onChangeProductField}
-        />
-      ),
-    },
-    {
-      name: 'phone',
-      title: 'Phone',
-      dataIndex: 'phone',
-      formField: (
-        <StyledTextField
-          placeholder='Enter phone'
-          value={phoneFieldValue}
-          onChange={onChangePhoneField}
-        />
-      ),
-    },
-  ];
-  const rowActions = item => (
-    <AvailableForRoles roles={[USER_ROLES.ADMIN]}>
-      <StyledRowActionsWrapper>
-        <Button
-          icon={PencilNormal}
-          hoverIcon={PencilHover}
-          activeIcon={PencilActive}
-          onClick={() => {
-            setIdFieldValue(item.id);
-            setProductFieldValue(item.product);
-            setPhoneFieldValue(item.phone);
-            setFormState(FORM_STATES.EDIT);
-          }}
-        />
-        <StyledDeleteButton
-          icon={TrashNormal}
-          hoverIcon={TrashHover}
-          activeIcon={TrashActive}
-          onClick={() => deleteCustomer(item.id)}
-        />
-      </StyledRowActionsWrapper>
-    </AvailableForRoles>
+  const columns = useMemo(
+    () => [
+      {
+        name: 'id',
+        title: 'ID',
+        dataIndex: 'id',
+      },
+      {
+        name: 'product',
+        title: 'Product',
+        dataIndex: 'product',
+        formField: (
+          <StyledTextField
+            placeholder='Enter product'
+            value={productFieldValue}
+            onChange={onChangeProductField}
+          />
+        ),
+      },
+      {
+        name: 'phone',
+        title: 'Phone',
+        dataIndex: 'phone',
+        formField: (
+          <StyledTextField
+            placeholder='Enter phone'
+            value={phoneFieldValue}
+            onChange={onChangePhoneField}
+          />
+        ),
+      },
+    ],
+    [phoneFieldValue, productFieldValue]
   );
-  const formButtons = () => (
-    <StyledFormButtonsWrapper>
-      {formState === FORM_STATES.CREATE && (
-        <RoundedButton
-          icon={Plus}
-          disabled={
-            productFieldValue.length === 0 || phoneFieldValue.length === 0
-          }
-          onClick={() => {
-            createCustomer(productFieldValue, phoneFieldValue).then(() => {
-              setProductFieldValue('');
-              setPhoneFieldValue('');
-            });
-          }}
-        />
-      )}
-      {formState === FORM_STATES.EDIT && (
-        <>
+  const rowActions = useCallback(
+    item => (
+      <AvailableForRoles roles={[USER_ROLES.ADMIN]}>
+        <StyledRowActionsWrapper>
+          <Button
+            icon={PencilNormal}
+            hoverIcon={PencilHover}
+            activeIcon={PencilActive}
+            onClick={() => {
+              setIdFieldValue(item.id);
+              setProductFieldValue(item.product);
+              setPhoneFieldValue(item.phone);
+              setFormState(FORM_STATES.EDIT);
+            }}
+          />
+          <StyledDeleteButton
+            icon={TrashNormal}
+            hoverIcon={TrashHover}
+            activeIcon={TrashActive}
+            onClick={() => deleteCustomer(item.id)}
+          />
+        </StyledRowActionsWrapper>
+      </AvailableForRoles>
+    ),
+    [deleteCustomer]
+  );
+  const isFormSubmitButtonDisabled = useMemo(
+    () => productFieldValue.length === 0 || phoneFieldValue.length === 0,
+    [productFieldValue, phoneFieldValue]
+  );
+  const handleCreateCustomerButtonClick = useCallback(
+    () =>
+      createCustomer(productFieldValue, phoneFieldValue).then(() => {
+        setProductFieldValue('');
+        setPhoneFieldValue('');
+      }),
+    [createCustomer, productFieldValue, phoneFieldValue]
+  );
+  const handleEditCustomerButtonClick = useCallback(
+    () =>
+      editCustomer(idFieldValue, productFieldValue, phoneFieldValue).then(
+        () => {
+          setIdFieldValue('');
+          setProductFieldValue('');
+          setPhoneFieldValue('');
+          setFormState(FORM_STATES.CREATE);
+        }
+      ),
+    [editCustomer, idFieldValue, productFieldValue, phoneFieldValue]
+  );
+  const handleCancelButtonClick = useCallback(() => {
+    setIdFieldValue('');
+    setProductFieldValue('');
+    setPhoneFieldValue('');
+    setFormState(FORM_STATES.CREATE);
+  }, []);
+  const formButtons = useCallback(
+    () => (
+      <StyledFormButtonsWrapper>
+        <RenderIfTrue statement={formState === FORM_STATES.CREATE}>
+          <RoundedButton
+            icon={Plus}
+            disabled={isFormSubmitButtonDisabled}
+            onClick={handleCreateCustomerButtonClick}
+          />
+        </RenderIfTrue>
+        <RenderIfTrue statement={formState === FORM_STATES.EDIT}>
           <RoundedButton
             icon={CheckMark}
-            disabled={
-              productFieldValue.length === 0 || phoneFieldValue.length === 0
-            }
-            onClick={() => {
-              editCustomer(
-                idFieldValue,
-                productFieldValue,
-                phoneFieldValue
-              ).then(() => {
-                setIdFieldValue('');
-                setProductFieldValue('');
-                setPhoneFieldValue('');
-                setFormState(FORM_STATES.CREATE);
-              });
-            }}
+            disabled={isFormSubmitButtonDisabled}
+            onClick={handleEditCustomerButtonClick}
           />
           <StyledCancelButton
             icon={Cross}
             color='#bababa'
             hoverColor='#838383'
             activeColor='#414141'
-            onClick={() => {
-              setIdFieldValue('');
-              setProductFieldValue('');
-              setPhoneFieldValue('');
-              setFormState(FORM_STATES.CREATE);
-            }}
+            onClick={handleCancelButtonClick}
           />
-        </>
-      )}
-    </StyledFormButtonsWrapper>
+        </RenderIfTrue>
+      </StyledFormButtonsWrapper>
+    ),
+    [
+      formState,
+      handleCreateCustomerButtonClick,
+      handleEditCustomerButtonClick,
+      handleCancelButtonClick,
+      isFormSubmitButtonDisabled,
+    ]
   );
   return (
     <Table

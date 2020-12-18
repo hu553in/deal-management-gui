@@ -13,12 +13,13 @@ import {
 import {
   AvailableForRoles,
   Button,
+  RenderIfTrue,
   RoundedButton,
   Table,
   TextField,
 } from '@src/components/index';
 import { EMAIL_REGEX, FORM_STATES, USER_ROLES } from '@src/constants';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 const StyledTextField = styled(props => <TextField {...props} />)`
@@ -55,28 +56,39 @@ const ProvidersPage = () => {
   const [phoneFieldValue, setPhoneFieldValue] = useState('');
   const [emailFieldValue, setEmailFieldValue] = useState('');
   const [emailValid, setEmailValid] = useState(true);
-  const checkEmailValidity = () => {
-    setEmailValid(
-      emailFieldValue.length === 0 || EMAIL_REGEX.test(emailFieldValue)
-    );
-  };
-  const getAllProviders = async () => {
+  const checkEmailValidity = useCallback(
+    () =>
+      setEmailValid(
+        emailFieldValue.length === 0 || EMAIL_REGEX.test(emailFieldValue)
+      ),
+    [emailFieldValue]
+  );
+  const getAllProviders = useCallback(async () => {
     const response = await provider.getAll();
-    return setProviders(response.data.data);
-  };
-  const deleteProvider = async id => {
-    await provider.deleteById(id);
-    return await getAllProviders();
-  };
-  const editProvider = async (id, product, phone, email) => {
-    await provider.edit(id, product, phone, email);
-    return await getAllProviders();
-  };
-  const createProvider = async (product, phone, email) => {
-    await provider.create(product, phone, email);
-    return await getAllProviders();
-  };
-  useEffect(() => getAllProviders(), []);
+    setProviders(response.data.data);
+  }, []);
+  const deleteProvider = useCallback(
+    async id => {
+      await provider.deleteById(id);
+      await getAllProviders();
+    },
+    [getAllProviders]
+  );
+  const editProvider = useCallback(
+    async (id, product, phone, email) => {
+      await provider.edit(id, product, phone, email);
+      await getAllProviders();
+    },
+    [getAllProviders]
+  );
+  const createProvider = useCallback(
+    async (product, phone, email) => {
+      await provider.create(product, phone, email);
+      await getAllProviders();
+    },
+    [getAllProviders]
+  );
+  useEffect(() => getAllProviders(), [getAllProviders]);
   const onChangeProductField = event => {
     event.preventDefault();
     setProductFieldValue(event.target.value);
@@ -90,140 +102,168 @@ const ProvidersPage = () => {
     setEmailValid(true);
     setEmailFieldValue(event.target.value);
   };
-  const columns = [
-    {
-      name: 'id',
-      title: 'ID',
-      dataIndex: 'id',
-    },
-    {
-      name: 'product',
-      title: 'Product',
-      dataIndex: 'product',
-      formField: (
-        <StyledTextField
-          placeholder='Enter product'
-          value={productFieldValue}
-          onChange={onChangeProductField}
-        />
-      ),
-    },
-    {
-      name: 'phone',
-      title: 'Phone',
-      dataIndex: 'phone',
-      formField: (
-        <StyledTextField
-          placeholder='Enter phone'
-          value={phoneFieldValue}
-          onChange={onChangePhoneField}
-        />
-      ),
-    },
-    {
-      name: 'email',
-      title: 'Email',
-      dataIndex: 'email',
-      formField: (
-        <StyledTextField
-          placeholder='Enter email'
-          value={emailFieldValue}
-          onChange={onChangeEmailField}
-          onFocusOut={checkEmailValidity}
-          invalid={!emailValid}
-        />
-      ),
-    },
-  ];
-  const rowActions = item => (
-    <AvailableForRoles roles={[USER_ROLES.ADMIN]}>
-      <StyledRowActionsWrapper>
-        <Button
-          icon={PencilNormal}
-          hoverIcon={PencilHover}
-          activeIcon={PencilActive}
-          onClick={() => {
-            setIdFieldValue(item.id);
-            setProductFieldValue(item.product);
-            setPhoneFieldValue(item.phone);
-            setEmailFieldValue(item.email);
-            setFormState(FORM_STATES.EDIT);
-          }}
-        />
-        <StyledDeleteButton
-          icon={TrashNormal}
-          hoverIcon={TrashHover}
-          activeIcon={TrashActive}
-          onClick={() => deleteProvider(item.id)}
-        />
-      </StyledRowActionsWrapper>
-    </AvailableForRoles>
+  const columns = useMemo(
+    () => [
+      {
+        name: 'id',
+        title: 'ID',
+        dataIndex: 'id',
+      },
+      {
+        name: 'product',
+        title: 'Product',
+        dataIndex: 'product',
+        formField: (
+          <StyledTextField
+            placeholder='Enter product'
+            value={productFieldValue}
+            onChange={onChangeProductField}
+          />
+        ),
+      },
+      {
+        name: 'phone',
+        title: 'Phone',
+        dataIndex: 'phone',
+        formField: (
+          <StyledTextField
+            placeholder='Enter phone'
+            value={phoneFieldValue}
+            onChange={onChangePhoneField}
+          />
+        ),
+      },
+      {
+        name: 'email',
+        title: 'Email',
+        dataIndex: 'email',
+        formField: (
+          <StyledTextField
+            placeholder='Enter email'
+            value={emailFieldValue}
+            onChange={onChangeEmailField}
+            onFocusOut={checkEmailValidity}
+            invalid={!emailValid}
+          />
+        ),
+      },
+    ],
+    [
+      checkEmailValidity,
+      emailFieldValue,
+      emailValid,
+      phoneFieldValue,
+      productFieldValue,
+    ]
   );
-  const formButtons = () => (
-    <StyledFormButtonsWrapper>
-      {formState === FORM_STATES.CREATE && (
-        <RoundedButton
-          icon={Plus}
-          disabled={
-            productFieldValue.length === 0 ||
-            phoneFieldValue.length === 0 ||
-            emailFieldValue.length === 0 ||
-            !EMAIL_REGEX.test(emailFieldValue)
-          }
-          onClick={() => {
-            createProvider(
-              productFieldValue,
-              phoneFieldValue,
-              emailFieldValue
-            ).then(() => {
-              setProductFieldValue('');
-              setPhoneFieldValue('');
-              setEmailFieldValue('');
-            });
-          }}
-        />
-      )}
-      {formState === FORM_STATES.EDIT && (
-        <>
+  const rowActions = useCallback(
+    item => (
+      <AvailableForRoles roles={[USER_ROLES.ADMIN]}>
+        <StyledRowActionsWrapper>
+          <Button
+            icon={PencilNormal}
+            hoverIcon={PencilHover}
+            activeIcon={PencilActive}
+            onClick={() => {
+              setIdFieldValue(item.id);
+              setProductFieldValue(item.product);
+              setPhoneFieldValue(item.phone);
+              setEmailFieldValue(item.email);
+              setFormState(FORM_STATES.EDIT);
+            }}
+          />
+          <StyledDeleteButton
+            icon={TrashNormal}
+            hoverIcon={TrashHover}
+            activeIcon={TrashActive}
+            onClick={() => deleteProvider(item.id)}
+          />
+        </StyledRowActionsWrapper>
+      </AvailableForRoles>
+    ),
+    [deleteProvider]
+  );
+  const isFormSubmitButtonDisabled = useMemo(
+    () =>
+      productFieldValue.length === 0 ||
+      phoneFieldValue.length === 0 ||
+      emailFieldValue.length === 0 ||
+      !EMAIL_REGEX.test(emailFieldValue),
+    [productFieldValue, phoneFieldValue, emailFieldValue]
+  );
+  const handleCreateProviderButtonClick = useCallback(
+    () =>
+      createProvider(productFieldValue, phoneFieldValue, emailFieldValue).then(
+        () => {
+          setProductFieldValue('');
+          setPhoneFieldValue('');
+          setEmailFieldValue('');
+        }
+      ),
+    [createProvider, productFieldValue, phoneFieldValue, emailFieldValue]
+  );
+  const handleEditProviderButtonClick = useCallback(
+    () =>
+      editProvider(
+        idFieldValue,
+        productFieldValue,
+        phoneFieldValue,
+        emailFieldValue
+      ).then(() => {
+        setIdFieldValue('');
+        setProductFieldValue('');
+        setPhoneFieldValue('');
+        setEmailFieldValue('');
+        setFormState(FORM_STATES.CREATE);
+      }),
+    [
+      editProvider,
+      emailFieldValue,
+      idFieldValue,
+      phoneFieldValue,
+      productFieldValue,
+    ]
+  );
+  const handleCancelButtonClick = useCallback(() => {
+    setIdFieldValue('');
+    setProductFieldValue('');
+    setPhoneFieldValue('');
+    setEmailFieldValue('');
+    setFormState(FORM_STATES.CREATE);
+  }, []);
+  const formButtons = useCallback(
+    () => (
+      <StyledFormButtonsWrapper>
+        <RenderIfTrue statement={formState === FORM_STATES.CREATE}>
+          <RoundedButton
+            icon={Plus}
+            disabled={isFormSubmitButtonDisabled}
+            onClick={handleCreateProviderButtonClick}
+          />
+        </RenderIfTrue>
+        <RenderIfTrue statement={formState === FORM_STATES.EDIT}>
           <RoundedButton
             icon={CheckMark}
-            disabled={
-              productFieldValue.length === 0 ||
-              phoneFieldValue.length === 0 ||
-              emailFieldValue.length === 0 ||
-              !EMAIL_REGEX.test(emailFieldValue)
-            }
-            onClick={() => {
-              editProvider(
-                idFieldValue,
-                productFieldValue,
-                phoneFieldValue,
-                emailFieldValue
-              ).then(() => {
-                setIdFieldValue('');
-                setProductFieldValue('');
-                setPhoneFieldValue('');
-                setEmailFieldValue('');
-                setFormState(FORM_STATES.CREATE);
-              });
-            }}
+            disabled={isFormSubmitButtonDisabled}
+            onClick={handleEditProviderButtonClick}
           />
           <StyledCancelButton
             icon={Cross}
             color='#bababa'
             hoverColor='#838383'
             activeColor='#414141'
-            onClick={() => {
-              setIdFieldValue('');
-              setProductFieldValue('');
-              setPhoneFieldValue('');
-              setEmailFieldValue('');
-              setFormState(FORM_STATES.CREATE);
-            }}
+            onClick={handleCancelButtonClick}
           />
-        </>
-      )}
-    </StyledFormButtonsWrapper>
+        </RenderIfTrue>
+      </StyledFormButtonsWrapper>
+    ),
+    [
+      formState,
+      handleCancelButtonClick,
+      handleCreateProviderButtonClick,
+      handleEditProviderButtonClick,
+      isFormSubmitButtonDisabled,
+    ]
   );
   return (
     <Table

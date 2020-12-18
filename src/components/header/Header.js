@@ -4,6 +4,7 @@ import { authManagementService } from '@src/services/index';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+import { useCallback } from 'react';
 
 const StyledHeaderNavBar = styled(props => <HeaderNavBar {...props} />)`
   margin: 0 60px;
@@ -17,10 +18,10 @@ const Header = ({ className }) => {
     { text: 'Providers', route: ROUTES.PROVIDERS },
     { text: 'Deals', route: ROUTES.DEALS },
   ];
-  const signOut = () => {
+  const signOut = useCallback(() => {
     authManagementService.clear();
     history.push(ROUTES.DEFAULT);
-  };
+  }, [history]);
   return (
     <header className={className}>
       <AppLogo />

@@ -11,7 +11,7 @@ import {
 } from '@src/components/index';
 import { EMAIL_REGEX } from '@src/constants';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 const StyledAppLogo = styled(props => <AppLogo {...props} />)`
@@ -60,7 +60,11 @@ const AuthForm = ({
   const [password, setPassword] = useState('');
   const [emailValid, setEmailValid] = useState(true);
   const [passwordValid, setPasswordValid] = useState(true);
-  const onSubmit = () => submitCallback(email, password);
+  const onSubmit = useCallback(() => submitCallback(email, password), [
+    email,
+    password,
+    submitCallback,
+  ]);
   const onChangeEmailField = event => {
     event.preventDefault();
     setEmailValid(true);
@@ -71,15 +75,22 @@ const AuthForm = ({
     setPasswordValid(true);
     setPassword(event.target.value);
   };
-  const checkEmailValidity = () =>
-    setEmailValid(email.length === 0 || EMAIL_REGEX.test(email));
-  const checkPasswordValidity = () =>
-    setPasswordValid(password.length === 0 || password.length > 8);
-  const submitButtonDisabled =
-    email.length === 0 ||
-    password.length === 0 ||
-    !emailValid ||
-    !passwordValid;
+  const checkEmailValidity = useCallback(
+    () => setEmailValid(email.length === 0 || EMAIL_REGEX.test(email)),
+    [email]
+  );
+  const checkPasswordValidity = useCallback(
+    () => setPasswordValid(password.length === 0 || password.length > 8),
+    [password]
+  );
+  const submitButtonDisabled = useMemo(
+    () =>
+      email.length === 0 ||
+      password.length === 0 ||
+      !emailValid ||
+      !passwordValid,
+    [email, password, emailValid, passwordValid]
+  );
   return (
     <section className={className}>
       <StyledAppLogo />
