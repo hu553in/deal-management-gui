@@ -1,5 +1,6 @@
 import { UpArrow } from '@src/assets/icons/index';
 import {
+  AvailableForRoles,
   Button,
   ContextMenuItem,
   ContextMenuSeparator,
@@ -53,14 +54,18 @@ const ContextMenu = ({
   };
   const itemElements = useMemo(() => {
     const elements = items.map(item => (
-      <ContextMenuItem
-        key={item.text}
-        text={item.text}
-        icon={item.icon}
-        hoverIcon={item.hoverIcon}
-        activeIcon={item.activeIcon}
-        onClick={item.onClick}
-      />
+      <AvailableForRoles
+        key={`${item.text}-available-for-roles`}
+        roles={item.availableForRoles}
+      >
+        <ContextMenuItem
+          text={item.text}
+          icon={item.icon}
+          hoverIcon={item.hoverIcon}
+          activeIcon={item.activeIcon}
+          onClick={item.onClick}
+        />
+      </AvailableForRoles>
     ));
     separatorPositions.forEach((position, index) =>
       elements.splice(

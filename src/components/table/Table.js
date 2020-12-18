@@ -89,9 +89,7 @@ const EnhancedTable = ({
                 </td>
               )),
               <td key={`${item[dataIndexForKeyGeneration]}-row-actions`}>
-                <AvailableForRoles roles={[USER_ROLES.ADMIN]}>
-                  {rowActions(item)}
-                </AvailableForRoles>
+                {rowActions(item)}
               </td>,
             ]}
           </tr>

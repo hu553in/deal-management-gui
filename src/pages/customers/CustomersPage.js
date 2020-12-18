@@ -10,8 +10,14 @@ import {
   TrashHover,
   TrashNormal,
 } from '@src/assets/icons/index';
-import { Button, RoundedButton, Table, TextField } from '@src/components/index';
-import { FORM_STATES } from '@src/constants';
+import {
+  AvailableForRoles,
+  Button,
+  RoundedButton,
+  Table,
+  TextField,
+} from '@src/components/index';
+import { FORM_STATES, USER_ROLES } from '@src/constants';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -104,25 +110,27 @@ const CustomersPage = () => {
     },
   ];
   const rowActions = item => (
-    <StyledRowActionsWrapper>
-      <Button
-        icon={PencilNormal}
-        hoverIcon={PencilHover}
-        activeIcon={PencilActive}
-        onClick={() => {
-          setIdFieldValue(item.id);
-          setProductFieldValue(item.product);
-          setPhoneFieldValue(item.phone);
-          setFormState(FORM_STATES.EDIT);
-        }}
-      />
-      <StyledDeleteButton
-        icon={TrashNormal}
-        hoverIcon={TrashHover}
-        activeIcon={TrashActive}
-        onClick={() => deleteCustomer(item.id)}
-      />
-    </StyledRowActionsWrapper>
+    <AvailableForRoles roles={[USER_ROLES.ADMIN]}>
+      <StyledRowActionsWrapper>
+        <Button
+          icon={PencilNormal}
+          hoverIcon={PencilHover}
+          activeIcon={PencilActive}
+          onClick={() => {
+            setIdFieldValue(item.id);
+            setProductFieldValue(item.product);
+            setPhoneFieldValue(item.phone);
+            setFormState(FORM_STATES.EDIT);
+          }}
+        />
+        <StyledDeleteButton
+          icon={TrashNormal}
+          hoverIcon={TrashHover}
+          activeIcon={TrashActive}
+          onClick={() => deleteCustomer(item.id)}
+        />
+      </StyledRowActionsWrapper>
+    </AvailableForRoles>
   );
   const formButtons = () => (
     <StyledFormButtonsWrapper>

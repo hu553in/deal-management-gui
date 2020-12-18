@@ -24,6 +24,7 @@ import {
 } from '@src/assets/icons/index';
 import { calculateHeight } from '@src/components/context-menu/ContextMenu';
 import {
+  AvailableForRoles,
   Button,
   ContextMenu,
   DealStatus,
@@ -33,9 +34,10 @@ import {
   Table,
   TextField,
 } from '@src/components/index';
-import { DEAL_STATUSES, FORM_STATES } from '@src/constants';
+import { DEAL_STATUSES, FORM_STATES, USER_ROLES } from '@src/constants';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { authManagementService } from '@src/services/index';
 
 const StyledTextField = styled(props => <TextField {...props} />)`
   width: 100%;
@@ -89,6 +91,7 @@ const RowActions = ({
     hoverIcon: MinusHover,
     activeIcon: MinusActive,
     text: 'Make pending',
+    availableForRoles: [USER_ROLES.SUPERVISOR, USER_ROLES.ADMIN],
     onClick: async () => {
       setIsOpen(false);
       await deal.changeStatus(item.id, DEAL_STATUSES.PENDING);
@@ -100,6 +103,7 @@ const RowActions = ({
     hoverIcon: CheckMarkGreenHover,
     activeIcon: CheckMarkGreenActive,
     text: 'Approve',
+    availableForRoles: [USER_ROLES.SUPERVISOR, USER_ROLES.ADMIN],
     onClick: async () => {
       setIsOpen(false);
       await deal.changeStatus(item.id, DEAL_STATUSES.APPROVED);
@@ -111,6 +115,7 @@ const RowActions = ({
     hoverIcon: CrossOrangeHover,
     activeIcon: CrossOrangeActive,
     text: 'Reject',
+    availableForRoles: [USER_ROLES.SUPERVISOR, USER_ROLES.ADMIN],
     onClick: async () => {
       setIsOpen(false);
       await deal.changeStatus(item.id, DEAL_STATUSES.REJECTED);
@@ -122,54 +127,62 @@ const RowActions = ({
     [DEAL_STATUSES.APPROVED]: [rejectButton, makePendingButton],
     [DEAL_STATUSES.REJECTED]: [approveButton, makePendingButton],
   };
+  const separatorPositions = [];
+  if (authManagementService.getUser().role === USER_ROLES.ADMIN) {
+    separatorPositions.push(2);
+  }
   return (
-    <StyledRowActionsWrapper>
-      <Button
-        ref={openMenuButtonRef}
-        icon={DownArrowNormal}
-        hoverIcon={DownArrowHover}
-        activeIcon={DownArrowActive}
-        onClick={() => setIsOpen(true)}
-      />
-      <RenderIfTrue statement={isOpen}>
-        <ContextMenu
-          closeMenuCallback={() => setIsOpen(false)}
-          separatorPositions={[2]}
-          openTo={openTo}
-          items={[
-            {
-              icon: PencilNormal,
-              hoverIcon: PencilHover,
-              activeIcon: PencilActive,
-              text: 'Edit',
-              onClick: () => {
-                setIsOpen(false);
-                setIdFieldValue(item.id);
-                setCustomerIdFieldValue(item.customerId);
-                setProviderIdFieldValue(item.providerId);
-                setDescriptionFieldValue(item.description);
-                setFormState(FORM_STATES.EDIT);
-              },
-            },
-            {
-              icon: TrashNormal,
-              hoverIcon: TrashHover,
-              activeIcon: TrashActive,
-              text: 'Delete',
-              onClick: async () => {
-                setIsOpen(false);
-                await deal.deleteById(item.id);
-                return await getAllDeals();
-              },
-            },
-            ...changeStatusButtons[item.status],
-          ]}
-          topOffset={openMenuButtonTopOffset}
-          bottomOffset={openMenuButtonBottomOffset}
-          rightOffset={openMenuButtonRightOffset}
+    <AvailableForRoles roles={[USER_ROLES.SUPERVISOR, USER_ROLES.ADMIN]}>
+      <StyledRowActionsWrapper>
+        <Button
+          ref={openMenuButtonRef}
+          icon={DownArrowNormal}
+          hoverIcon={DownArrowHover}
+          activeIcon={DownArrowActive}
+          onClick={() => setIsOpen(true)}
         />
-      </RenderIfTrue>
-    </StyledRowActionsWrapper>
+        <RenderIfTrue statement={isOpen}>
+          <ContextMenu
+            closeMenuCallback={() => setIsOpen(false)}
+            separatorPositions={separatorPositions}
+            openTo={openTo}
+            items={[
+              {
+                icon: PencilNormal,
+                hoverIcon: PencilHover,
+                activeIcon: PencilActive,
+                text: 'Edit',
+                availableForRoles: [USER_ROLES.ADMIN],
+                onClick: () => {
+                  setIsOpen(false);
+                  setIdFieldValue(item.id);
+                  setCustomerIdFieldValue(item.customerId);
+                  setProviderIdFieldValue(item.providerId);
+                  setDescriptionFieldValue(item.description);
+                  setFormState(FORM_STATES.EDIT);
+                },
+              },
+              {
+                icon: TrashNormal,
+                hoverIcon: TrashHover,
+                activeIcon: TrashActive,
+                text: 'Delete',
+                availableForRoles: [USER_ROLES.ADMIN],
+                onClick: async () => {
+                  setIsOpen(false);
+                  await deal.deleteById(item.id);
+                  return await getAllDeals();
+                },
+              },
+              ...changeStatusButtons[item.status],
+            ]}
+            topOffset={openMenuButtonTopOffset}
+            bottomOffset={openMenuButtonBottomOffset}
+            rightOffset={openMenuButtonRightOffset}
+          />
+        </RenderIfTrue>
+      </StyledRowActionsWrapper>
+    </AvailableForRoles>
   );
 };
 
