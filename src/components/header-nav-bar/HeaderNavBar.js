@@ -1,5 +1,4 @@
 import { HeaderNavBarLink } from '@src/components/index';
-import { ROUTES } from '@src/constants';
 import PropTypes from 'prop-types';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
@@ -26,12 +25,7 @@ const HeaderNavBar = ({ links, className }) => {
 };
 
 HeaderNavBar.propTypes = {
-  links: PropTypes.arrayOf(
-    PropTypes.shape({
-      text: PropTypes.string.isRequired,
-      route: PropTypes.oneOf(Object.values(ROUTES)).isRequired,
-    })
-  ),
+  links: PropTypes.arrayOf(PropTypes.object).isRequired,
   className: PropTypes.string.isRequired,
 };
 

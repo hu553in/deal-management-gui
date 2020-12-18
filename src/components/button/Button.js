@@ -1,16 +1,17 @@
 import PropTypes from 'prop-types';
+import { forwardRef } from 'react';
 import styled from 'styled-components';
 
-const Button = ({ onClick, className }) => (
-  <button className={className} onClick={onClick} />
-);
+const Button = forwardRef(({ onClick, className }, ref) => (
+  <button ref={ref} className={className} onClick={onClick} />
+));
 
 Button.propTypes = {
   onClick: PropTypes.func.isRequired,
   className: PropTypes.string.isRequired,
 };
 
-const StyledButton = styled(props => <Button {...props} />)`
+const StyledButton = styled(Button)`
   width: 26px;
   height: 26px;
   padding: 0;

@@ -1,3 +1,4 @@
+import { provider } from '@src/api/index';
 import {
   CheckMark,
   Cross,
@@ -10,8 +11,7 @@ import {
   TrashNormal,
 } from '@src/assets/icons/index';
 import { Button, RoundedButton, Table, TextField } from '@src/components/index';
-import { API_ENDPOINTS, EMAIL_REGEX, FORM_STATES } from '@src/constants';
-import axios from 'axios';
+import { EMAIL_REGEX, FORM_STATES } from '@src/constants';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -42,8 +42,6 @@ const StyledCancelButton = styled(props => <RoundedButton {...props} />)`
 `;
 
 const ProvidersPage = () => {
-  // eslint-disable-next-line no-unused-vars
-  const [error, setError] = useState(undefined);
   const [formState, setFormState] = useState(FORM_STATES.CREATE);
   const [providers, setProviders] = useState([]);
   const [idFieldValue, setIdFieldValue] = useState('');
@@ -52,63 +50,25 @@ const ProvidersPage = () => {
   const [emailFieldValue, setEmailFieldValue] = useState('');
   const [emailValid, setEmailValid] = useState(true);
   const checkEmailValidity = () => {
-    setEmailValid(true);
     setEmailValid(
       emailFieldValue.length === 0 || EMAIL_REGEX.test(emailFieldValue)
     );
   };
   const getAllProviders = async () => {
-    setError(undefined);
-    try {
-      const response = await axios.get(API_ENDPOINTS.PROVIDER);
-      return setProviders(response.data.data);
-    } catch (e) {
-      setError('Unable to get providers. Please try again later.');
-      throw e;
-    }
+    const response = await provider.getAll();
+    return setProviders(response.data.data);
   };
   const deleteProvider = async id => {
-    setError(undefined);
-    try {
-      await axios.delete(`${API_ENDPOINTS.PROVIDER}/${id}`);
-      return await getAllProviders();
-    } catch (e) {
-      setError(
-        'Unable to delete provider. Please check ' +
-          'the entered data or try again later.'
-      );
-      throw e;
-    }
+    await provider.deleteById(id);
+    return await getAllProviders();
   };
   const editProvider = async (id, product, phone, email) => {
-    setError(undefined);
-    try {
-      await axios.patch(`${API_ENDPOINTS.PROVIDER}/${id}`, {
-        product,
-        phone,
-        email,
-      });
-      return await getAllProviders();
-    } catch (e) {
-      setError(
-        'Unable to edit provider. Please check ' +
-          'the entered data or try again later.'
-      );
-      throw e;
-    }
+    await provider.edit(id, product, phone, email);
+    return await getAllProviders();
   };
   const createProvider = async (product, phone, email) => {
-    setError(undefined);
-    try {
-      await axios.post(API_ENDPOINTS.PROVIDER, { product, phone, email });
-      return await getAllProviders();
-    } catch (e) {
-      setError(
-        'Unable to create provider. Please check ' +
-          'the entered data or try again later.'
-      );
-      throw e;
-    }
+    await provider.create(product, phone, email);
+    return await getAllProviders();
   };
   useEffect(() => getAllProviders(), []);
   const onChangeProductField = event => {

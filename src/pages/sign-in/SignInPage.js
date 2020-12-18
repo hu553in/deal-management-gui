@@ -1,7 +1,7 @@
+import { auth } from '@src/api/index';
 import { AuthForm } from '@src/components/index';
-import { API_ENDPOINTS, ROUTES } from '@src/constants';
+import { ROUTES } from '@src/constants';
 import { authManagementService } from '@src/services/index';
-import axios from 'axios';
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
@@ -10,8 +10,8 @@ const SignInPage = () => {
   const [error, setError] = useState(undefined);
   const signIn = (email, password) => {
     setError(undefined);
-    axios
-      .post(API_ENDPOINTS.SIGN_IN, { email, password })
+    auth
+      .signIn(email, password)
       .then(response => {
         authManagementService.setToken(response.data.data.token);
         authManagementService.setUser(response.data.data.user);

@@ -1,10 +1,9 @@
-import axios from 'axios';
+import { auth } from '@src/api/index';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
-import { ROUTES } from '@src/constants';
 
 const AuthProvider = ({ children }) => {
-  useEffect(() => axios.get(ROUTES.WHOAMI));
+  useEffect(() => auth.whoami());
   return children;
 };
 

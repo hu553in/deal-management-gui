@@ -1,3 +1,4 @@
+import { customer } from '@src/api/index';
 import {
   CheckMark,
   Cross,
@@ -10,8 +11,7 @@ import {
   TrashNormal,
 } from '@src/assets/icons/index';
 import { Button, RoundedButton, Table, TextField } from '@src/components/index';
-import { API_ENDPOINTS, FORM_STATES } from '@src/constants';
-import axios from 'axios';
+import { FORM_STATES } from '@src/constants';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -42,60 +42,26 @@ const StyledCancelButton = styled(props => <RoundedButton {...props} />)`
 `;
 
 const CustomersPage = () => {
-  const [, setError] = useState(undefined);
   const [formState, setFormState] = useState(FORM_STATES.CREATE);
   const [customers, setCustomers] = useState([]);
   const [idFieldValue, setIdFieldValue] = useState('');
   const [productFieldValue, setProductFieldValue] = useState('');
   const [phoneFieldValue, setPhoneFieldValue] = useState('');
   const getAllCustomers = async () => {
-    setError(undefined);
-    try {
-      const response = await axios.get(API_ENDPOINTS.CUSTOMER);
-      return setCustomers(response.data.data);
-    } catch (e) {
-      setError('Unable to get customers. Please try again later.');
-      throw e;
-    }
+    const response = await customer.getAll();
+    return setCustomers(response.data.data);
   };
   const deleteCustomer = async id => {
-    setError(undefined);
-    try {
-      await axios.delete(`${API_ENDPOINTS.CUSTOMER}/${id}`);
-      return await getAllCustomers();
-    } catch (e) {
-      setError(
-        'Unable to delete customer. Please check ' +
-          'the entered data or try again later.'
-      );
-      throw e;
-    }
+    await customer.deleteById(id);
+    return await getAllCustomers();
   };
   const editCustomer = async (id, product, phone) => {
-    setError(undefined);
-    try {
-      await axios.patch(`${API_ENDPOINTS.CUSTOMER}/${id}`, { product, phone });
-      return await getAllCustomers();
-    } catch (e) {
-      setError(
-        'Unable to edit customer. Please check ' +
-          'the entered data or try again later.'
-      );
-      throw e;
-    }
+    await customer.edit(id, product, phone);
+    return await getAllCustomers();
   };
   const createCustomer = async (product, phone) => {
-    setError(undefined);
-    try {
-      await axios.post(API_ENDPOINTS.CUSTOMER, { product, phone });
-      return await getAllCustomers();
-    } catch (e) {
-      setError(
-        'Unable to create customer. Please check ' +
-          'the entered data or try again later.'
-      );
-      throw e;
-    }
+    await customer.create(product, phone);
+    return await getAllCustomers();
   };
   useEffect(() => getAllCustomers(), []);
   const onChangeProductField = event => {

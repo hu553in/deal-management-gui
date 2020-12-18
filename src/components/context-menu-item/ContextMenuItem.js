@@ -26,10 +26,29 @@ const StyledContextMenuItem = styled(props => <ContextMenuItem {...props} />)`
   background-position: left 14px center;
   background-repeat: no-repeat;
   background-image: url(${({ icon }) => icon});
+
+  ${({ hoverIcon }) =>
+    hoverIcon &&
+    `&:hover {
+    background-image: url(${hoverIcon});
+  }`}
+
+  ${({ activeIcon }) =>
+    activeIcon &&
+    `&:active {
+    background-image: url(${activeIcon});
+  }`}
 `;
 
 StyledContextMenuItem.propTypes = {
   icon: PropTypes.string.isRequired,
+  hoverIcon: PropTypes.string,
+  activeIcon: PropTypes.string,
+};
+
+StyledContextMenuItem.defaultProps = {
+  hoverIcon: null,
+  activeIcon: null,
 };
 
 export default StyledContextMenuItem;

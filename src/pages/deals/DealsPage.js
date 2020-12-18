@@ -1,14 +1,40 @@
-import { CheckMark, Cross, Plus } from '@src/assets/icons/index';
+import { customer, deal, provider } from '@src/api/index';
 import {
+  CheckMark,
+  CheckMarkGreenActive,
+  CheckMarkGreenHover,
+  CheckMarkGreenNormal,
+  Cross,
+  CrossOrangeActive,
+  CrossOrangeHover,
+  CrossOrangeNormal,
+  DownArrowActive,
+  DownArrowHover,
+  DownArrowNormal,
+  MinusActive,
+  MinusHover,
+  MinusNormal,
+  PencilActive,
+  PencilHover,
+  PencilNormal,
+  Plus,
+  TrashActive,
+  TrashHover,
+  TrashNormal,
+} from '@src/assets/icons/index';
+import { calculateHeight } from '@src/components/context-menu/ContextMenu';
+import {
+  Button,
+  ContextMenu,
   DealStatus,
   Dropdown,
+  RenderIfTrue,
   RoundedButton,
   Table,
   TextField,
 } from '@src/components/index';
-import { API_ENDPOINTS, FORM_STATES } from '@src/constants';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { DEAL_STATUSES, FORM_STATES } from '@src/constants';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 const StyledTextField = styled(props => <TextField {...props} />)`
@@ -33,8 +59,121 @@ const StyledCancelButton = styled(props => <RoundedButton {...props} />)`
   margin-left: 35px;
 `;
 
+const RowActions = ({
+  item,
+  setIdFieldValue,
+  setCustomerIdFieldValue,
+  setProviderIdFieldValue,
+  setDescriptionFieldValue,
+  setFormState,
+  getAllDeals,
+}) => {
+  const contextMenuHeight = calculateHeight(4, 2);
+  const openMenuButtonRef = useRef(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const openMenuButtonRect = openMenuButtonRef?.current?.getBoundingClientRect();
+  const openMenuButtonTopOffset = openMenuButtonRect?.top;
+  const openMenuButtonBottomOffset =
+    window.innerHeight - openMenuButtonRect?.bottom;
+  const openMenuButtonRightOffset =
+    window.innerWidth - openMenuButtonRect?.right;
+  const openTo =
+    openMenuButtonBottomOffset < contextMenuHeight ? 'top' : 'bottom';
+  useEffect(() => {
+    const handleResize = () => setIsOpen(false);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  });
+  const makePendingButton = {
+    icon: MinusNormal,
+    hoverIcon: MinusHover,
+    activeIcon: MinusActive,
+    text: 'Make pending',
+    onClick: async () => {
+      setIsOpen(false);
+      await deal.changeStatus(item.id, DEAL_STATUSES.PENDING);
+      return await getAllDeals();
+    },
+  };
+  const approveButton = {
+    icon: CheckMarkGreenNormal,
+    hoverIcon: CheckMarkGreenHover,
+    activeIcon: CheckMarkGreenActive,
+    text: 'Approve',
+    onClick: async () => {
+      setIsOpen(false);
+      await deal.changeStatus(item.id, DEAL_STATUSES.APPROVED);
+      return await getAllDeals();
+    },
+  };
+  const rejectButton = {
+    icon: CrossOrangeNormal,
+    hoverIcon: CrossOrangeHover,
+    activeIcon: CrossOrangeActive,
+    text: 'Reject',
+    onClick: async () => {
+      setIsOpen(false);
+      await deal.changeStatus(item.id, DEAL_STATUSES.REJECTED);
+      return await getAllDeals();
+    },
+  };
+  const changeStatusButtons = {
+    [DEAL_STATUSES.PENDING]: [approveButton, rejectButton],
+    [DEAL_STATUSES.APPROVED]: [rejectButton, makePendingButton],
+    [DEAL_STATUSES.REJECTED]: [approveButton, makePendingButton],
+  };
+  return (
+    <StyledRowActionsWrapper>
+      <Button
+        ref={openMenuButtonRef}
+        icon={DownArrowNormal}
+        hoverIcon={DownArrowHover}
+        activeIcon={DownArrowActive}
+        onClick={() => setIsOpen(true)}
+      />
+      <RenderIfTrue statement={isOpen}>
+        <ContextMenu
+          closeMenuCallback={() => setIsOpen(false)}
+          separatorPositions={[2]}
+          openTo={openTo}
+          items={[
+            {
+              icon: PencilNormal,
+              hoverIcon: PencilHover,
+              activeIcon: PencilActive,
+              text: 'Edit',
+              onClick: () => {
+                setIsOpen(false);
+                setIdFieldValue(item.id);
+                setCustomerIdFieldValue(item.customerId);
+                setProviderIdFieldValue(item.providerId);
+                setDescriptionFieldValue(item.description);
+                setFormState(FORM_STATES.EDIT);
+              },
+            },
+            {
+              icon: TrashNormal,
+              hoverIcon: TrashHover,
+              activeIcon: TrashActive,
+              text: 'Delete',
+              onClick: async () => {
+                setIsOpen(false);
+                await deal.deleteById(item.id);
+                return await getAllDeals();
+              },
+            },
+            ...changeStatusButtons[item.status],
+          ]}
+          topOffset={openMenuButtonTopOffset}
+          bottomOffset={openMenuButtonBottomOffset}
+          rightOffset={openMenuButtonRightOffset}
+        />
+      </RenderIfTrue>
+    </StyledRowActionsWrapper>
+  );
+};
+
 const DealsPage = () => {
-  const [, setError] = useState(undefined);
   const [formState, setFormState] = useState(FORM_STATES.CREATE);
   const [customers, setCustomers] = useState([]);
   const [providers, setProviders] = useState([]);
@@ -44,82 +183,24 @@ const DealsPage = () => {
   const [providerIdFieldValue, setProviderIdFieldValue] = useState(null);
   const [descriptionFieldValue, setDescriptionFieldValue] = useState('');
   const getAllCustomers = async () => {
-    setError(undefined);
-    try {
-      const response = await axios.get(API_ENDPOINTS.CUSTOMER);
-      return setCustomers(response.data.data);
-    } catch (e) {
-      setError('Unable to get customers. Please try again later.');
-      throw e;
-    }
+    const response = await customer.getAll();
+    return setCustomers(response.data.data);
   };
   const getAllProviders = async () => {
-    setError(undefined);
-    try {
-      const response = await axios.get(API_ENDPOINTS.PROVIDER);
-      return setProviders(response.data.data);
-    } catch (e) {
-      setError('Unable to get providers. Please try again later.');
-      throw e;
-    }
+    const response = await provider.getAll();
+    return setProviders(response.data.data);
   };
   const getAllDeals = async () => {
-    setError(undefined);
-    try {
-      const response = await axios.get(API_ENDPOINTS.DEAL);
-      return setDeals(response.data.data);
-    } catch (e) {
-      setError('Unable to get deals. Please try again later.');
-      throw e;
-    }
-  };
-  // eslint-disable-next-line no-unused-vars
-  const deleteDeal = async id => {
-    setError(undefined);
-    try {
-      await axios.delete(`${API_ENDPOINTS.DEAL}/${id}`);
-      return await getAllDeals();
-    } catch (e) {
-      setError(
-        'Unable to delete deal. Please check ' +
-          'the entered data or try again later.'
-      );
-      throw e;
-    }
+    const response = await deal.getAll();
+    return setDeals(response.data.data);
   };
   const editDeal = async (id, customerId, providerId, description) => {
-    setError(undefined);
-    try {
-      await axios.patch(`${API_ENDPOINTS.DEAL}/${id}`, {
-        customerId,
-        providerId,
-        description,
-      });
-      return await getAllDeals();
-    } catch (e) {
-      setError(
-        'Unable to edit deal. Please check ' +
-          'the entered data or try again later.'
-      );
-      throw e;
-    }
+    await deal.edit(id, customerId, providerId, description);
+    return await getAllDeals();
   };
   const createDeal = async (customerId, providerId, description) => {
-    setError(undefined);
-    try {
-      await axios.post(API_ENDPOINTS.DEAL, {
-        customerId,
-        providerId,
-        description,
-      });
-      return await getAllDeals();
-    } catch (e) {
-      setError(
-        'Unable to create deal. Please check ' +
-          'the entered data or try again later.'
-      );
-      throw e;
-    }
+    await deal.create(customerId, providerId, description);
+    return await getAllDeals();
   };
   useEffect(() => {
     getAllCustomers();
@@ -154,11 +235,8 @@ const DealsPage = () => {
           }))}
           selectedOption={
             customerIdFieldValue === null
-              ? undefined
-              : {
-                  label: customerIdFieldValue,
-                  value: customerIdFieldValue,
-                }
+              ? null
+              : { label: customerIdFieldValue, value: customerIdFieldValue }
           }
           placeholder='Choose customer ID'
           onChange={option => setCustomerIdFieldValue(option?.value ?? null)}
@@ -177,11 +255,8 @@ const DealsPage = () => {
           }))}
           selectedOption={
             providerIdFieldValue === null
-              ? undefined
-              : {
-                  label: providerIdFieldValue,
-                  value: providerIdFieldValue,
-                }
+              ? null
+              : { label: providerIdFieldValue, value: providerIdFieldValue }
           }
           placeholder='Choose provider ID'
           onChange={option => setProviderIdFieldValue(option?.value ?? null)}
@@ -201,9 +276,6 @@ const DealsPage = () => {
       ),
     },
   ];
-  const rowActions = item => (
-    <StyledRowActionsWrapper></StyledRowActionsWrapper>
-  );
   const formButtons = () => (
     <StyledFormButtonsWrapper>
       {formState === FORM_STATES.CREATE && (
@@ -224,6 +296,7 @@ const DealsPage = () => {
               setProviderIdFieldValue(null);
               setDescriptionFieldValue('');
             });
+            getAllDeals();
           }}
         />
       )}
@@ -272,7 +345,17 @@ const DealsPage = () => {
     <Table
       columns={columns}
       data={deals}
-      rowActions={rowActions}
+      rowActions={item => (
+        <RowActions
+          item={item}
+          setIdFieldValue={setIdFieldValue}
+          setCustomerIdFieldValue={setCustomerIdFieldValue}
+          setProviderIdFieldValue={setProviderIdFieldValue}
+          setDescriptionFieldValue={setDescriptionFieldValue}
+          setFormState={setFormState}
+          getAllDeals={getAllDeals}
+        />
+      )}
       formButtons={formButtons}
     />
   );

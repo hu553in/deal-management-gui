@@ -9,7 +9,7 @@ import {
   TextField,
   TextFieldLeftLabel,
 } from '@src/components/index';
-import { EMAIL_REGEX, ROUTES } from '@src/constants';
+import { EMAIL_REGEX } from '@src/constants';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import styled from 'styled-components';
@@ -126,10 +126,7 @@ AuthForm.propTypes = {
   submitCallback: PropTypes.func.isRequired,
   className: PropTypes.string.isRequired,
   authSuggestionText: PropTypes.string.isRequired,
-  authSuggestionLink: PropTypes.shape({
-    text: PropTypes.string.isRequired,
-    route: PropTypes.oneOf(Object.values(ROUTES)).isRequired,
-  }).isRequired,
+  authSuggestionLink: PropTypes.object.isRequired,
   submitButtonText: PropTypes.string.isRequired,
   error: PropTypes.string,
 };

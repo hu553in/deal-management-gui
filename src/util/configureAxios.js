@@ -11,9 +11,6 @@ const configureAxios = () => {
           'Authorization'
         ] = `Bearer ${authManagementService.getToken()}`;
       }
-      if (config.method === 'post' || config.method === 'patch') {
-        config.headers['Content-Type'] = 'application/json';
-      }
       return Promise.resolve(config);
     },
     error => Promise.reject(error)
